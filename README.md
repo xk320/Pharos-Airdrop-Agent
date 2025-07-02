@@ -6,8 +6,7 @@
 
 ## 主要功能
 
-  - 自动获取信息
-  - 自动使用 [Proxyscrape 免费代理](https://proxyscrape.com/free-proxy-list) 运行 - 选项1
+  - 自动登录
   - 自动使用自定义代理运行
   - 自动每日签到领取奖励
   - 自动领取 Faucet PHRS - USDC - USDT
