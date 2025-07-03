@@ -145,20 +145,12 @@ class PharosTestnet:
     async def load_proxies(self, use_proxy_choice: int):
         filename = "proxy.txt"
         try:
-            if use_proxy_choice == 1:
-                async with ClientSession(timeout=ClientTimeout(total=30)) as session:
-                    async with session.get("https://api.proxyscrape.com/v4/free-proxy-list/get?request=display_proxies&proxy_format=protocolipport&format=text") as response:
-                        response.raise_for_status()
-                        content = await response.text()
-                        with open(filename, 'w') as f:
-                            f.write(content)
-                        self.proxies = [line.strip() for line in content.splitlines() if line.strip()]
-            else:
-                if not os.path.exists(filename):
-                    self.log(f"{Fore.RED + Style.BRIGHT}未找到文件 {filename}.{Style.RESET_ALL}")
-                    return
-                with open(filename, 'r') as f:
-                    self.proxies = [line.strip() for line in f.read().splitlines() if line.strip()]
+
+            if not os.path.exists(filename):
+                self.log(f"{Fore.RED + Style.BRIGHT}未找到文件 {filename}.{Style.RESET_ALL}")
+                return
+            with open(filename, 'r') as f:
+                self.proxies = [line.strip() for line in f.read().splitlines() if line.strip()]
             
             if not self.proxies:
                 self.log(f"{Fore.RED + Style.BRIGHT}未找到任何代理。{Style.RESET_ALL}")
@@ -168,7 +160,6 @@ class PharosTestnet:
                 f"{Fore.GREEN + Style.BRIGHT}总代理数: {Style.RESET_ALL}"
                 f"{Fore.WHITE + Style.BRIGHT}{len(self.proxies)}{Style.RESET_ALL}"
             )
-        
         except Exception as e:
             self.log(f"{Fore.RED + Style.BRIGHT}无法加载代理: {e}{Style.RESET_ALL}")
             self.proxies = []
@@ -509,7 +500,7 @@ class PharosTestnet:
                     f"{Fore.CYAN+Style.BRIGHT}     区块浏览器:{Style.RESET_ALL}"
                     f"{Fore.WHITE+Style.BRIGHT} {explorer} {Style.RESET_ALL}"
                 )
-                await asyncio.sleep(10)
+                await asyncio.sleep(5)
             
             return True
         except Exception as e:
@@ -660,231 +651,6 @@ class PharosTestnet:
                 flush=True
             )
             await asyncio.sleep(1)
-
-    def print_question(self):
-        while True:
-            try:
-                print(f"{Fore.GREEN + Style.BRIGHT}选择选项:{Style.RESET_ALL}")
-                print(f"{Fore.WHITE + Style.BRIGHT}1. 签到 - 领取PHRS Faucet{Style.RESET_ALL}")
-                print(f"{Fore.WHITE + Style.BRIGHT}2. 发送给朋友{Style.RESET_ALL}")
-                print(f"{Fore.WHITE + Style.BRIGHT}3. 包装 - 解包{Style.RESET_ALL}")
-                print(f"{Fore.WHITE + Style.BRIGHT}4. 添加流动性{Style.RESET_ALL}")
-                print(f"{Fore.WHITE + Style.BRIGHT}5. 兑换 WPHRS - USDC - USDT{Style.RESET_ALL}")
-                print(f"{Fore.WHITE + Style.BRIGHT}6. 运行所有功能{Style.RESET_ALL}")
-                option = 6
-
-                if option in [1, 2, 3, 4, 5, 6]:
-                    option_type = (
-                        "签到 - 领取PHRS Faucet" if option == 1 else 
-                        "发送给朋友" if option == 2 else 
-                        "包装 - 解包" if option == 3 else
-                        "添加流动性" if option == 4 else
-                        "兑换 WPHRS - USDC - USDT" if option == 5 else
-                        "运行所有功能"
-                    )
-                    print(f"{Fore.GREEN + Style.BRIGHT}{option_type} 已选择.{Style.RESET_ALL}")
-                    break
-                else:
-                    print(f"{Fore.RED + Style.BRIGHT}请输入1, 2, 3, 4, 5或6.{Style.RESET_ALL}")
-            except ValueError:
-                print(f"{Fore.RED + Style.BRIGHT}输入无效. 请输入数字 (1, 2, 3, 4, 5或6).{Style.RESET_ALL}")
-
-        if option == 2:
-
-
-            while True:
-                try:
-                    min_delay = int(input(f"{Fore.YELLOW + Style.BRIGHT}每次转账的最小延迟 -> {Style.RESET_ALL}").strip())
-                    if min_delay >= 0:
-                        self.min_delay = min_delay
-                        break
-                    else:
-                        print(f"{Fore.RED + Style.BRIGHT}最小延迟必须 >= 0.{Style.RESET_ALL}")
-                except ValueError:
-                    print(f"{Fore.RED + Style.BRIGHT}输入无效. 请输入数字.{Style.RESET_ALL}")
-
-            while True:
-                try:
-                    max_delay = int(input(f"{Fore.YELLOW + Style.BRIGHT}每次转账的最大延迟 -> {Style.RESET_ALL}").strip())
-                    if max_delay >= min_delay:
-                        self.max_delay = max_delay
-                        break
-                    else:
-                        print(f"{Fore.RED + Style.BRIGHT}最大延迟必须 >= 最小延迟.{Style.RESET_ALL}")
-                except ValueError:
-                    print(f"{Fore.RED + Style.BRIGHT}输入无效. 请输入数字.{Style.RESET_ALL}")
-
-        elif option == 3:
-            while True:
-                try:
-                    print(f"{Fore.GREEN + Style.BRIGHT}选择选项:{Style.RESET_ALL}")
-                    print(f"{Fore.WHITE + Style.BRIGHT}1. 包装 PHRS 为 WPHRS{Style.RESET_ALL}")
-                    print(f"{Fore.WHITE + Style.BRIGHT}2. 解包 WPHRS 为 PHRS{Style.RESET_ALL}")
-                    wrap_option = 1
-
-                    if wrap_option in [1, 2]:
-                        wrap_type = (
-                            "包装 PHRS 为 WPHRS" if wrap_option == 1 else 
-                            "解包 WPHRS 为 PHRS"
-                        )
-                        print(f"{Fore.GREEN + Style.BRIGHT}{wrap_type} 已选择.{Style.RESET_ALL}")
-                        self.wrap_option = wrap_option
-                        break
-                    else:
-                        print(f"{Fore.RED + Style.BRIGHT}请输入1或2.{Style.RESET_ALL}")
-                except ValueError:
-                    print(f"{Fore.RED + Style.BRIGHT}输入无效. 请输入数字 (1或2).{Style.RESET_ALL}")
-
-            while True:
-                try:
-                    wrap_amount = float(input(f"{Fore.YELLOW + Style.BRIGHT}输入金额 [1 或 0.01 或 0.001, 等等] -> {Style.RESET_ALL}").strip())
-                    if wrap_amount > 0:
-                        self.wrap_amount = wrap_amount
-                        break
-                    else:
-                        print(f"{Fore.RED + Style.BRIGHT}金额必须大于0.{Style.RESET_ALL}")
-                except ValueError:
-                    print(f"{Fore.RED + Style.BRIGHT}输入无效. 请输入小数.{Style.RESET_ALL}")
-
-        elif option == 4:
-            while True:
-                try:
-                    add_lp_count = int(input(f"{Fore.YELLOW + Style.BRIGHT}你想添加多少次流动性? -> {Style.RESET_ALL}").strip())
-                    if add_lp_count > 0:
-                        self.add_lp_count = add_lp_count
-                        break
-                    else:
-                        print(f"{Fore.RED + Style.BRIGHT}请输入正数.{Style.RESET_ALL}")
-                except ValueError:
-                    print(f"{Fore.RED + Style.BRIGHT}输入无效. 请输入数字.{Style.RESET_ALL}")
-
-            while True:
-                try:
-                    min_delay = int(input(f"{Fore.YELLOW + Style.BRIGHT}每次添加流动性的最小延迟 -> {Style.RESET_ALL}").strip())
-                    if min_delay >= 0:
-                        self.min_delay = min_delay
-                        break
-                    else:
-                        print(f"{Fore.RED + Style.BRIGHT}最小延迟必须 >= 0.{Style.RESET_ALL}")
-                except ValueError:
-                    print(f"{Fore.RED + Style.BRIGHT}输入无效. 请输入数字.{Style.RESET_ALL}")
-
-            while True:
-                try:
-                    max_delay = int(input(f"{Fore.YELLOW + Style.BRIGHT}每次添加流动性的最大延迟 -> {Style.RESET_ALL}").strip())
-                    if max_delay >= min_delay:
-                        self.max_delay = max_delay
-                        break
-                    else:
-                        print(f"{Fore.RED + Style.BRIGHT}最大延迟必须 >= 最小延迟.{Style.RESET_ALL}")
-                except ValueError:
-                    print(f"{Fore.RED + Style.BRIGHT}输入无效. 请输入数字.{Style.RESET_ALL}")
-
-        elif option == 5:
-            while True:
-                try:
-                    swap_count = int(input(f"{Fore.YELLOW + Style.BRIGHT}你想进行多少次兑换? -> {Style.RESET_ALL}").strip())
-                    if swap_count > 0:
-                        self.swap_count = swap_count
-                        break
-                    else:
-                        print(f"{Fore.RED + Style.BRIGHT}请输入正数.{Style.RESET_ALL}")
-                except ValueError:
-                    print(f"{Fore.RED + Style.BRIGHT}输入无效. 请输入数字.{Style.RESET_ALL}")
-
-            while True:
-                try:
-                    wphrs_amount = float(input(f"{Fore.YELLOW + Style.BRIGHT}你想兑换多少WPHRS? [1 或 0.01 或 0.001, 等等] -> {Style.RESET_ALL}").strip())
-                    if wphrs_amount > 0:
-                        self.wphrs_amount = wphrs_amount
-                        break
-                    else:
-                        print(f"{Fore.RED + Style.BRIGHT}金额必须大于0.{Style.RESET_ALL}")
-                except ValueError:
-                    print(f"{Fore.RED + Style.BRIGHT}输入无效. 请输入数字.{Style.RESET_ALL}")
-
-            while True:
-                try:
-                    usdc_amount = float(input(f"{Fore.YELLOW + Style.BRIGHT}你想兑换多少USDC? [1 或 0.01 或 0.001, 等等] -> {Style.RESET_ALL}").strip())
-                    if usdc_amount > 0:
-                        self.usdc_amount = usdc_amount
-                        break
-                    else:
-                        print(f"{Fore.RED + Style.BRIGHT}金额必须大于0.{Style.RESET_ALL}")
-                except ValueError:
-                    print(f"{Fore.RED + Style.BRIGHT}输入无效. 请输入数字.{Style.RESET_ALL}")
-
-            while True:
-                try:
-                    usdt_amount = float(input(f"{Fore.YELLOW + Style.BRIGHT}你想兑换多少USDT? [1 或 0.01 或 0.001, 等等] -> {Style.RESET_ALL}").strip())
-                    if usdt_amount > 0:
-                        self.usdt_amount = usdt_amount
-                        break
-                    else:
-                        print(f"{Fore.RED + Style.BRIGHT}金额必须大于0.{Style.RESET_ALL}")
-                except ValueError:
-                    print(f"{Fore.RED + Style.BRIGHT}输入无效. 请输入数字.{Style.RESET_ALL}")
-
-            while True:
-                try:
-                    min_delay = int(input(f"{Fore.YELLOW + Style.BRIGHT}每次兑换的最小延迟 -> {Style.RESET_ALL}").strip())
-                    if min_delay >= 0:
-                        self.min_delay = min_delay
-                        break
-                    else:
-                        print(f"{Fore.RED + Style.BRIGHT}最小延迟必须 >= 0.{Style.RESET_ALL}")
-                except ValueError:
-                    print(f"{Fore.RED + Style.BRIGHT}输入无效. 请输入数字.{Style.RESET_ALL}")
-
-            while True:
-                try:
-                    max_delay = int(input(f"{Fore.YELLOW + Style.BRIGHT}每次兑换的最大延迟 -> {Style.RESET_ALL}").strip())
-                    if max_delay >= min_delay:
-                        self.max_delay = max_delay
-                        break
-                    else:
-                        print(f"{Fore.RED + Style.BRIGHT}最大延迟必须 >= 最小延迟.{Style.RESET_ALL}")
-                except ValueError:
-                    print(f"{Fore.RED + Style.BRIGHT}输入无效. 请输入数字.{Style.RESET_ALL}")
-
-        elif option == 6:
-            pass
-
-
-
-
-        while True:
-            try:
-                print(f"{Fore.WHITE + Style.BRIGHT}1. 使用Proxyscrape免费代理{Style.RESET_ALL}")
-                print(f"{Fore.WHITE + Style.BRIGHT}2. 使用专用代理{Style.RESET_ALL}")
-                print(f"{Fore.WHITE + Style.BRIGHT}3. 不使用代理{Style.RESET_ALL}")
-                choose = 2
-
-                if choose in [1, 2, 3]:
-                    proxy_type = (
-                        "使用Proxyscrape免费代理" if choose == 1 else 
-                        "使用专用代理" if choose == 2 else 
-                        "不使用"
-                    )
-                    print(f"{Fore.GREEN + Style.BRIGHT}选择 {proxy_type} Proxy已选择.{Style.RESET_ALL}")
-                    break
-                else:
-                    print(f"{Fore.RED + Style.BRIGHT}请输入1, 2或3.{Style.RESET_ALL}")
-            except ValueError:
-                print(f"{Fore.RED + Style.BRIGHT}输入无效. 请输入数字 (1, 2或3).{Style.RESET_ALL}")
-
-        rotate = False
-        if choose in [1, 2]:
-            while True:
-                rotate = "n"
-
-                if rotate in ["y", "n"]:
-                    rotate = rotate == "y"
-                    break
-                else:
-                    print(f"{Fore.RED + Style.BRIGHT}输入无效. 请输入'y'或'n'.{Style.RESET_ALL}")
-
-        return option, choose, rotate
     
     async def user_login(self, address: str, proxy=None, retries=5):
         url = f"{self.BASE_API}/user/login?address={address}&signature={self.signatures[address]}&wallet=OKX+Wallet&invite_code={self.ref_code}"
@@ -903,7 +669,7 @@ class PharosTestnet:
                         return await response.json()
             except (Exception, ClientResponseError) as e:
                 if attempt < retries - 1:
-                    await asyncio.sleep(5)
+                    await asyncio.sleep(3)
                     continue
                 self.log(
                     f"{Fore.CYAN+Style.BRIGHT}消息   :{Style.RESET_ALL}"
@@ -927,12 +693,12 @@ class PharosTestnet:
                         response.raise_for_status()
                         result = await response.json()
                         if "code" in result and result["code"] != 0:
-                            await asyncio.sleep(5)
+                            await asyncio.sleep(3)
                             continue
                         return result
             except (Exception, ClientResponseError) as e:
                 if attempt < retries - 1:
-                    await asyncio.sleep(5)
+                    await asyncio.sleep(3)
                     continue
 
         return None
@@ -953,12 +719,12 @@ class PharosTestnet:
                         response.raise_for_status()
                         result = await response.json()
                         if "code" in result and result["code"] not in [0, 1]:
-                            await asyncio.sleep(5)
+                            await asyncio.sleep(3)
                             continue
                         return result
             except (Exception, ClientResponseError) as e:
                 if attempt < retries - 1:
-                    await asyncio.sleep(5)
+                    await asyncio.sleep(3)
                     continue
 
             return None
@@ -978,12 +744,12 @@ class PharosTestnet:
                         response.raise_for_status()
                         result = await response.json()
                         if "code" in result and result["code"] != 0:
-                            await asyncio.sleep(5)
+                            await asyncio.sleep(3)
                             continue
                         return result
             except (Exception, ClientResponseError) as e:
                 if attempt < retries - 1:
-                    await asyncio.sleep(5)
+                    await asyncio.sleep(3)
                     continue
 
             return None
@@ -1004,12 +770,12 @@ class PharosTestnet:
                         response.raise_for_status()
                         result = await response.json()
                         if "code" in result and result["code"] not in [0, 1]:
-                            await asyncio.sleep(5)
+                            await asyncio.sleep(3)
                             continue
                         return result
             except (Exception, ClientResponseError) as e:
                 if attempt < retries - 1:
-                    await asyncio.sleep(5)
+                    await asyncio.sleep(3)
                     continue
 
             return None
@@ -1030,12 +796,12 @@ class PharosTestnet:
                         response.raise_for_status()
                         result = await response.json()
                         if "code" in result and result["code"] != 0:
-                            await asyncio.sleep(5)
+                            await asyncio.sleep(3)
                             continue
                         return result
             except (Exception, ClientResponseError) as e:
                 if attempt < retries - 1:
-                    await asyncio.sleep(5)
+                    await asyncio.sleep(3)
                     continue
                 self.log(
                     f"{Fore.CYAN+Style.BRIGHT}     消息 :{Style.RESET_ALL}"
@@ -1069,7 +835,7 @@ class PharosTestnet:
                     f"{Fore.YELLOW+Style.BRIGHT} 正在轮换代理... {Style.RESET_ALL}"
                 )
                 proxy = self.rotate_proxy_for_account(address)
-                await asyncio.sleep(5)
+                await asyncio.sleep(3)  
                 continue
 
             self.log(
@@ -1106,7 +872,7 @@ class PharosTestnet:
                 end="\r",
                 flush=True
             )
-            await asyncio.sleep(5)
+            await asyncio.sleep(3)
 
             proxy = self.get_next_proxy_for_account(address) if use_proxy else None
 
@@ -1235,6 +1001,7 @@ class PharosTestnet:
             )
 
     async def process_option_1(self, address: str, use_proxy: bool):
+        # 签到
         proxy = self.get_next_proxy_for_account(address) if use_proxy else None
 
         profile = await self.user_profile(address, proxy)
@@ -1305,7 +1072,7 @@ class PharosTestnet:
 
     async def process_option_2(self, account: str, address: str, use_proxy: bool):
         self.log(f"{Fore.CYAN+Style.BRIGHT}转账  :{Style.RESET_ALL}                       ")
-        await asyncio.sleep(5)
+        await asyncio.sleep(3)  
 
         for i in range(self.tx_count):
             self.log(
@@ -1482,80 +1249,37 @@ class PharosTestnet:
     async def process_accounts(self, account: str, address: str, option: int, use_proxy: bool, rotate_proxy: bool):
         logined = await self.process_user_login(address, use_proxy, rotate_proxy)
         if logined:
+            self.log(
+                f"{Fore.CYAN+Style.BRIGHT}选项    :{Style.RESET_ALL}"
+                f"{Fore.BLUE+Style.BRIGHT} 运行所有功能 {Style.RESET_ALL}"
+            )
 
-            if option == 1:
-                self.log(
-                    f"{Fore.CYAN+Style.BRIGHT}选项    :{Style.RESET_ALL}"
-                    f"{Fore.BLUE+Style.BRIGHT} 签到 - 领取PHRS Faucet {Style.RESET_ALL}"
-                )
+            await self.process_option_1(address, use_proxy)
+            await asyncio.sleep(3)
 
-                await self.process_option_1(address, use_proxy)
+            await self.process_option_2(account, address, use_proxy)
+            await asyncio.sleep(3)
 
-            elif option == 2:
-                self.log(
-                    f"{Fore.CYAN+Style.BRIGHT}选项    :{Style.RESET_ALL}"
-                    f"{Fore.BLUE+Style.BRIGHT} 发送给朋友 {Style.RESET_ALL}"
-                )
+            await self.process_option_3(account, address, use_proxy)
+            await asyncio.sleep(3)
+            
+            await self.process_option_4(account, address, use_proxy)
+            await asyncio.sleep(3)
 
-                await self.process_option_2(account, address, use_proxy)
-
-            elif option == 3:
-                wrap_type = "包装 PHRS 为 WPHRS" if self.wrap_amount == 1 else "解包 WPHRS 为 PHRS"
-                self.log(
-                    f"{Fore.CYAN+Style.BRIGHT}选项    :{Style.RESET_ALL}"
-                    f"{Fore.BLUE+Style.BRIGHT} {wrap_type} {Style.RESET_ALL}"
-                )
-                
-                await self.process_option_3(account, address, use_proxy)
-
-            elif option == 4:
-                self.log(
-                    f"{Fore.CYAN+Style.BRIGHT}选项    :{Style.RESET_ALL}"
-                    f"{Fore.BLUE+Style.BRIGHT} 添加流动性 {Style.RESET_ALL}"
-                )
-
-                await self.process_option_4(account, address, use_proxy)
-
-            elif option == 5:
-                self.log(
-                    f"{Fore.CYAN+Style.BRIGHT}选项    :{Style.RESET_ALL}"
-                    f"{Fore.BLUE+Style.BRIGHT} 兑换 WPHRS - USDC - USDT  {Style.RESET_ALL}"
-                )
-
-                await self.process_option_5(account, address, use_proxy)
-
-            else:
-                self.log(
-                    f"{Fore.CYAN+Style.BRIGHT}选项    :{Style.RESET_ALL}"
-                    f"{Fore.BLUE+Style.BRIGHT} 运行所有功能 {Style.RESET_ALL}"
-                )
-
-                await self.process_option_1(address, use_proxy)
-                await asyncio.sleep(5)
-
-                await self.process_option_2(account, address, use_proxy)
-                await asyncio.sleep(5)
-
-                await self.process_option_3(account, address, use_proxy)
-                await asyncio.sleep(5)
-                
-                await self.process_option_4(account, address, use_proxy)
-                await asyncio.sleep(5)
-
-                await self.process_option_5(account, address, use_proxy)
-                await asyncio.sleep(5)
+            await self.process_option_5(account, address, use_proxy)
+            await asyncio.sleep(3)
 
     async def main(self):
         try:
             with open('accounts.txt', 'r') as file:
                 accounts = [line.strip() for line in file if line.strip()]
             
-            option, use_proxy_choice, rotate_proxy = self.print_question()
+            option = 6
+            use_proxy_choice = 2
+            rotate_proxy = "n"
 
             while True:
-                use_proxy = False
-                if use_proxy_choice in [1, 2]:
-                    use_proxy = True
+                use_proxy = True
 
                 self.clear_terminal()
                 self.welcome()
