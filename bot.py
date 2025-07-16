@@ -828,15 +828,15 @@ class PharosTestnet:
                 )
                 return True
 
-            if rotate_proxy:
-                self.log(
-                    f"{Fore.CYAN+Style.BRIGHT}状态 :{Style.RESET_ALL}"
-                    f"{Fore.RED+Style.BRIGHT} 登录失败, {Style.RESET_ALL}"
-                    f"{Fore.YELLOW+Style.BRIGHT} 正在轮换代理... {Style.RESET_ALL}"
-                )
-                proxy = self.rotate_proxy_for_account(address)
-                await asyncio.sleep(3)  
-                continue
+            # if rotate_proxy:
+            #     self.log(
+            #         f"{Fore.CYAN+Style.BRIGHT}状态 :{Style.RESET_ALL}"
+            #         f"{Fore.RED+Style.BRIGHT} 登录失败, {Style.RESET_ALL}"
+            #         f"{Fore.YELLOW+Style.BRIGHT} 正在轮换代理... {Style.RESET_ALL}"
+            #     )
+            #     proxy = self.rotate_proxy_for_account(address)
+            #     await asyncio.sleep(3)  
+            #     continue
 
             self.log(
                 f"{Fore.CYAN+Style.BRIGHT}状态 :{Style.RESET_ALL}"
