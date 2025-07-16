@@ -874,19 +874,19 @@ class PharosTestnet:
             )
             await asyncio.sleep(3)
 
-            proxy = self.get_next_proxy_for_account(address) if use_proxy else None
+            # proxy = self.get_next_proxy_for_account(address) if use_proxy else None
 
-            verify = await self.verify_task(address, tx_hash, proxy)
-            if verify and verify.get("code") == 0:
-                self.log(
-                    f"{Fore.CYAN+Style.BRIGHT}     验证  :{Style.RESET_ALL}"
-                    f"{Fore.GREEN+Style.BRIGHT} 成功 {Style.RESET_ALL}                   "
-                )
-            else:
-                self.log(
-                    f"{Fore.CYAN+Style.BRIGHT}     验证  :{Style.RESET_ALL}"
-                    f"{Fore.RED+Style.BRIGHT} 失败 {Style.RESET_ALL}                   "
-                )
+            # verify = await self.verify_task(address, tx_hash, proxy)
+            # if verify and verify.get("code") == 0:
+            #     self.log(
+            #         f"{Fore.CYAN+Style.BRIGHT}     验证  :{Style.RESET_ALL}"
+            #         f"{Fore.GREEN+Style.BRIGHT} 成功 {Style.RESET_ALL}                   "
+            #     )
+            # else:
+            #     self.log(
+            #         f"{Fore.CYAN+Style.BRIGHT}     验证  :{Style.RESET_ALL}"
+            #         f"{Fore.RED+Style.BRIGHT} 失败 {Style.RESET_ALL}                   "
+            #     )
         else:
             self.log(
                 f"{Fore.CYAN+Style.BRIGHT}     状态  :{Style.RESET_ALL}"
