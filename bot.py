@@ -9,6 +9,8 @@ from fake_useragent import FakeUserAgent
 from datetime import datetime
 from colorama import *
 import asyncio, random, secrets, json, time, os, pytz
+from FaroSwap import Faroswap
+from DomainName import DomainName
 
 wib = pytz.timezone('Asia/Jakarta')
 
@@ -131,9 +133,6 @@ class PharosTestnet:
         print(
             f"""
         {Fore.GREEN + Style.BRIGHT}Pharos Testnet{Fore.BLUE + Style.BRIGHT} Bot Airdrop
-            """
-            f"""
-        {Fore.GREEN + Style.BRIGHT}Velhust {Fore.YELLOW + Style.BRIGHT} Bot Airdrop
             """
         )
 
@@ -892,38 +891,7 @@ class PharosTestnet:
                 f"{Fore.CYAN+Style.BRIGHT}     状态  :{Style.RESET_ALL}"
                 f"{Fore.RED+Style.BRIGHT} 交易失败 {Style.RESET_ALL}"
             )
-    def generate_swap_option_new(self):
-        valid_pairs = [
-            (from_t, to_t) for from_t in self.TICKERS for to_t in self.TICKERS
-            if from_t != to_t and  (
-                (from_t == "PHRS" and to_t == "WPHRS") or 
-                (from_t == "WPHRS" and to_t == "PHRS")
-            )
-        ]
 
-        from_ticker, to_ticker = random.choice(valid_pairs)
-
-        def get_contract(ticker):
-            if ticker == "PHRS":
-                return self.PHRS_CONTRACT_ADDRESS
-            return getattr(self, f"{ticker}_CONTRACT_ADDRESS")
-
-        def get_amount(ticker):
-            return getattr(self, f"{ticker.lower()}_swap_amount")
-
-        from_token = get_contract(from_ticker)
-        to_token = get_contract(to_ticker)
-        amount = get_amount(from_ticker)
-
-        swap_option = f"{from_ticker} to {to_ticker}"
-
-        return  {
-            "swap_option": swap_option,
-            "from_token": from_token,
-            "to_token": to_token,
-            "ticker": from_ticker,
-            "amount": amount
-        }
     async def process_perform_wrapped(self, account: str, address: str, use_proxy: bool):
         tx_hash, block_number = await self.perform_wrapped(account, address, use_proxy)
         if tx_hash and block_number:
@@ -1276,123 +1244,15 @@ class PharosTestnet:
 
             await self.process_perform_swap(account, address, from_token, to_token, from_ticker, to_ticker, swap_amount, use_proxy)
             await self.print_timer()
+
+    async def process_option_6(self):
+        faroswap = Faroswap()
+        await faroswap.main()
     
-    async def process_option_6(self, account: str, address: str, use_proxy: bool):
-        self.log(f"{Fore.CYAN+Style.BRIGHT}Random Swap  :{Style.RESET_ALL} ")
-
-        for i in range(self.swap_count):
-            self.log(
-                f"{Fore.MAGENTA+Style.BRIGHT}   ● {Style.RESET_ALL}"
-                f"{Fore.GREEN+Style.BRIGHT}Swap{Style.RESET_ALL}"
-                f"{Fore.WHITE+Style.BRIGHT} {i+1} / {self.swap_count} {Style.RESET_ALL}                           "
-            )
-
-            option = self.generate_swap_option_new()
-            swap_option = option["swap_option"]
-            from_token = option["from_token"]
-            to_token = option["to_token"]
-            ticker = option["ticker"]
-            amount = option["amount"]
-
-            self.log(
-                f"{Fore.CYAN+Style.BRIGHT}     Option  :{Style.RESET_ALL}"
-                f"{Fore.BLUE+Style.BRIGHT} {swap_option} {Style.RESET_ALL}"
-            )
-
-            balance = await self.get_token_balance(address, from_token, use_proxy)
-            self.log(
-                f"{Fore.CYAN+Style.BRIGHT}     Balance :{Style.RESET_ALL}"
-                f"{Fore.WHITE+Style.BRIGHT} {balance} {ticker} {Style.RESET_ALL}"
-            )
-            self.log(
-                f"{Fore.CYAN+Style.BRIGHT}     Amount  :{Style.RESET_ALL}"
-                f"{Fore.WHITE+Style.BRIGHT} {amount} {ticker} {Style.RESET_ALL}"
-            )
-
-            if not balance or balance <= amount:
-                self.log(
-                    f"{Fore.CYAN+Style.BRIGHT}     Status  :{Style.RESET_ALL}"
-                    f"{Fore.YELLOW+Style.BRIGHT} Insufficient {ticker} Token Balance {Style.RESET_ALL}"
-                )
-                continue
-
-            await self.process_perform_swap(account, address, from_token, to_token, amount, use_proxy)
-            await self.print_timer()
-
-    async def process_option_7(self, account: str, address: str, use_proxy: bool):
-        self.log(f"{Fore.CYAN+Style.BRIGHT}Add Liquidity:{Style.RESET_ALL} ")
-
-        for i in range(self.add_lp_count):
-            self.log(
-                f"{Fore.MAGENTA+Style.BRIGHT}   ● {Style.RESET_ALL}"
-                f"{Fore.GREEN+Style.BRIGHT}Pool{Style.RESET_ALL}"
-                f"{Fore.WHITE+Style.BRIGHT} {i+1} / {self.add_lp_count} {Style.RESET_ALL}                           "
-            )
-
-            option = self.generate_lp_option()
-            lp_option = option["lp_option"]
-            base_token = option["base_token"]
-            quote_token = option["quote_token"]
-            base_ticker = option["base_ticker"]
-            quote_ticker = option["quote_ticker"]
-            amount = option["amount"]
-
-            self.log(
-                f"{Fore.CYAN+Style.BRIGHT}     Option  :{Style.RESET_ALL}"
-                f"{Fore.BLUE+Style.BRIGHT} {lp_option} {Style.RESET_ALL}"
-            )
-
-            base_balance = await self.get_token_balance(address, base_token, use_proxy)
-            quote_balance = await self.get_token_balance(address, quote_token, use_proxy)
-
-            self.log(f"{Fore.CYAN+Style.BRIGHT}     Balance :{Style.RESET_ALL}")
-            self.log(
-                f"{Fore.MAGENTA+Style.BRIGHT}        ● {Style.RESET_ALL}"
-                f"{Fore.WHITE+Style.BRIGHT}{base_balance} {base_ticker}{Style.RESET_ALL}"
-            )
-            self.log(
-                f"{Fore.MAGENTA+Style.BRIGHT}        ● {Style.RESET_ALL}"
-                f"{Fore.WHITE+Style.BRIGHT}{quote_balance} {quote_ticker}{Style.RESET_ALL}"
-            )
-
-            self.log(f"{Fore.CYAN+Style.BRIGHT}     Amount  :{Style.RESET_ALL}")
-            self.log(
-                f"{Fore.MAGENTA+Style.BRIGHT}        ● {Style.RESET_ALL}"
-                f"{Fore.WHITE+Style.BRIGHT}{amount} {base_ticker}{Style.RESET_ALL}"
-            )
-            self.log(
-                f"{Fore.MAGENTA+Style.BRIGHT}        ● {Style.RESET_ALL}"
-                f"{Fore.WHITE+Style.BRIGHT}{amount} {quote_ticker}{Style.RESET_ALL}"
-            )
-
-            if not base_balance or base_balance <= amount:
-                self.log(
-                    f"{Fore.CYAN+Style.BRIGHT}     Status  :{Style.RESET_ALL}"
-                    f"{Fore.YELLOW+Style.BRIGHT} Insufficient {base_ticker} Token Balance {Style.RESET_ALL}"
-                )
-                continue
-
-            if not quote_balance or quote_balance <= amount:
-                self.log(
-                    f"{Fore.CYAN+Style.BRIGHT}     Status  :{Style.RESET_ALL}"
-                    f"{Fore.YELLOW+Style.BRIGHT} Insufficient {quote_ticker} Token Balance {Style.RESET_ALL}"
-                )
-                continue
-
-            pair_address = (
-                self.pools[0]["USDC_USDT"] if base_ticker == "USDC" else
-                self.pools[0]["USDT_USDC"]
-            )
-
-            if not pair_address:
-                self.log(
-                    f"{Fore.CYAN+Style.BRIGHT}     Status  :{Style.RESET_ALL}"
-                    f"{Fore.YELLOW+Style.BRIGHT} Pool Address Not Found in pools.json {Style.RESET_ALL}"
-                )
-                break
-            
-            await self.process_perform_add_dvm_liquidity(account, address, pair_address, base_token, quote_token, amount, use_proxy)
-            await self.print_timer()
+    async def process_option_7(self):
+        dn = DomainName()
+        # 启动注册流程，参数可自定义
+        dn.run(reg_per_key=1, max_concurrency=5)
 
     async def process_accounts(self, account: str, address: str, option: int, use_proxy: bool, rotate_proxy: bool):
         logined = await self.process_user_login(address, use_proxy, rotate_proxy)
@@ -1415,12 +1275,6 @@ class PharosTestnet:
             await asyncio.sleep(1)
 
             await self.process_option_5(account, address, use_proxy)
-            await asyncio.sleep(1)
-
-            await self.process_option_6(account, address, use_proxy)
-            await asyncio.sleep(1)
-
-            await self.process_option_7(account, address, use_proxy)
             await asyncio.sleep(1)
 
     async def main(self):
@@ -1469,7 +1323,14 @@ class PharosTestnet:
                         await self.process_accounts(account, address, option, use_proxy, rotate_proxy)
                         await asyncio.sleep(3)
 
+                await self.process_option_6()
+                await asyncio.sleep(1)
+                await self.process_option_7()
+                await asyncio.sleep(1)
+
                 self.log(f"{Fore.CYAN + Style.BRIGHT}={Style.RESET_ALL}"*72)
+                # 
+
                 seconds = 24 * 60 * 60
                 while seconds > 0:
                     formatted_time = self.format_seconds(seconds)
@@ -1491,102 +1352,11 @@ class PharosTestnet:
             self.log(f"{Fore.RED+Style.BRIGHT}错误: {e}{Style.RESET_ALL}")
             raise e
 
-
-class Faroswap:
-    def __init__(self, bot):
-        self.bot = bot
-        # 迁移原有的业务属性
-        self.HEADERS = {
-            "Accept": "application/json, text/plain, */*",
-            "Accept-Language": "id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7",
-            "Origin": "https://faroswap.xyz",
-            "Referer": "https://faroswap.xyz/",
-            "Sec-Fetch-Dest": "empty",
-            "Sec-Fetch-Mode": "cors",
-            "Sec-Fetch-Site": "cross-site",
-            "User-Agent": FakeUserAgent().random
-        }
-        self.RPC_URL = "https://api.zan.top/node/v1/pharos/testnet/54b49326c9f44b6e8730dc5dd4348421"
-        self.PHRS_CONTRACT_ADDRESS = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
-        self.WPHRS_CONTRACT_ADDRESS = "0x3019B247381c850ab53Dc0EE53bCe7A07Ea9155f"
-        self.USDC_CONTRACT_ADDRESS = "0x72df0bcd7276f2dFbAc900D1CE63c272C4BCcCED"
-        self.USDT_CONTRACT_ADDRESS = "0xD4071393f8716661958F766DF660033b3d35fD29"
-        self.WETH_CONTRACT_ADDRESS = "0x4E28826d32F1C398DED160DC16Ac6873357d048f"
-        self.WBTC_CONTRACT_ADDRESS = "0x8275c526d1bCEc59a31d673929d3cE8d108fF5c7"
-        self.MIXSWAP_ROUTER_ADDRESS = "0x3541423f25A1Ca5C98fdBCf478405d3f0aaD1164"
-        self.DVM_ROUTER_ADDRESS = "0x4b177AdEd3b8bD1D5D747F91B9E853513838Cd49"
-        self.POOL_ROUTER_ADDRESS = "0x73cafc894dbfc181398264934f7be4e482fc9d40"
-        self.TICKERS = [
-            "PHRS", 
-            "WPHRS", 
-            "USDC", 
-            "USDT", 
-            "WETH",
-            "WBTC"
-        ]
-        self.ERC20_CONTRACT_ABI = json.loads('''[
-            {"type":"function","name":"balanceOf","stateMutability":"view","inputs":[{"name":"address","type":"address"}],"outputs":[{"name":"","type":"uint256"}]},
-            {"type":"function","name":"allowance","stateMutability":"view","inputs":[{"name":"owner","type":"address"},{"name":"spender","type":"address"}],"outputs":[{"name":"","type":"uint256"}]},
-            {"type":"function","name":"approve","stateMutability":"nonpayable","inputs":[{"name":"spender","type":"address"},{"name":"amount","type":"uint256"}],"outputs":[{"name":"","type":"bool"}]},
-            {"type":"function","name":"decimals","stateMutability":"view","inputs":[],"outputs":[{"name":"","type":"uint8"}]},
-            {"type":"function","name":"deposit","stateMutability":"payable","inputs":[],"outputs":[]},
-            {"type":"function","name":"withdraw","stateMutability":"nonpayable","inputs":[{"name":"wad","type":"uint256"}],"outputs":[]}
-        ]''')
-        self.UNISWAP_V2_CONTRACT_ABI = [
-            {
-                "type": "function",
-                "name": "addDVMLiquidity",
-                "stateMutability": "payable",
-                "inputs": [
-                    { "internalType": "address", "name": "dvmAddress", "type": "address" },
-                    { "internalType": "uint256", "name": "baseInAmount", "type": "uint256" },
-                    { "internalType": "uint256", "name": "quoteInAmount", "type": "uint256" },
-                    { "internalType": "uint256", "name": "baseMinAmount", "type": "uint256" },
-                    { "internalType": "uint256", "name": "quoteMinAmount", "type": "uint256" },
-                    { "internalType": "uint8", "name": "flag", "type": "uint8" },
-                    { "internalType": "uint256", "name": "deadLine", "type": "uint256" }
-                ],
-                "outputs": [
-                    { "internalType": "uint256", "name": "shares", "type": "uint256" },
-                    { "internalType": "uint256", "name": "baseAdjustedInAmount", "type": "uint256" },
-                    { "internalType": "uint256", "name": "quoteAdjustedInAmount", "type": "uint256" }
-                ]
-            }
-        ]
-        # 业务相关属性
-        self.used_nonce = {}
-        self.dp_or_wd_option = None
-        self.deposit_amount = 0
-        self.withdraw_amount = 0
-        self.swap_count = 0
-        self.phrs_swap_amount = 0
-        self.wphrs_swap_amount = 0
-        self.usdc_swap_amount = 0
-        self.usdt_swap_amount = 0
-        self.weth_swap_amount = 0
-        self.wbtc_swap_amount = 0
-        self.add_lp_count = 0
-        self.phrs_add_lp_amount = 0
-        self.wphrs_add_lp_amount = 0
-        self.usdc_add_lp_amount = 0
-        self.usdt_add_lp_amount = 0
-        self.weth_add_lp_amount = 0
-        self.wbtc_add_lp_amount = 0
-        self.min_delay = 0
-        self.max_delay = 0
-
-    # 下面省略通用方法（如clear_terminal、log、welcome、format_seconds、代理相关等），全部通过self.bot调用
-    # 只保留业务方法，如合约交互、swap、add liquidity等
-    # 例如：
-    # async def perform_deposit(self, ...):
-    #     # 业务逻辑，代理、日志等通过self.bot调用
-    #     ...
-    # 其余方法请根据需要迁移和适配
-
 if __name__ == "__main__":
     try:
         bot = PharosTestnet()
         asyncio.run(bot.main())
+
     except KeyboardInterrupt:
         print(
             f"{Fore.CYAN + Style.BRIGHT}[ {datetime.now().astimezone(wib).strftime('%x %X %Z')} ]{Style.RESET_ALL}"
