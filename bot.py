@@ -1323,8 +1323,8 @@ class PharosTestnet:
                         await self.process_accounts(account, address, option, use_proxy, rotate_proxy)
                         await asyncio.sleep(3)
 
-                await self.process_option_6()
-                await asyncio.sleep(1)
+                # await self.process_option_6()
+                # await asyncio.sleep(1)
                 # await self.process_option_7()
                 # await asyncio.sleep(1)
 
