@@ -76,20 +76,20 @@ class Faroswap:
         self.account_proxies = {}
         self.used_nonce = {}
         self.dp_or_wd_option = None
-        self.swap_count = 5
+        self.swap_count = 1
         self.phrs_swap_amount = amount
         self.wphrs_swap_amount = amount
         self.usdc_swap_amount = amount
         self.usdt_swap_amount = amount
         self.weth_swap_amount = amount
         self.wbtc_swap_amount = amount
-        self.add_lp_count = 1
-        self.phrs_add_lp_amount = amount
-        self.wphrs_add_lp_amount = amount
-        self.usdc_add_lp_amount = amount
-        self.usdt_add_lp_amount = amount
-        self.weth_add_lp_amount = amount
-        self.wbtc_add_lp_amount = amount
+        self.add_lp_count = 10
+        self.phrs_add_lp_amount = amount/2
+        self.wphrs_add_lp_amount = amount/2
+        self.usdc_add_lp_amount = amount/2
+        self.usdt_add_lp_amount = amount/2
+        self.weth_add_lp_amount = amount/2
+        self.wbtc_add_lp_amount = amount/2
         self.min_delay = 3
         self.max_delay = 5
 
@@ -226,15 +226,14 @@ class Faroswap:
     # - 只有当 from_t 和 to_t 不相同时才会被选中（即不能自己兑换自己）。
     # - 并且排除了 PHRS 和 WPHRS 之间的直接兑换（无论是 PHRS->WPHRS 还是 WPHRS->PHRS 都不允许）。
     # 这样做的目的是为了生成一组有效的、可用的兑换对，供后续随机选择使用。
-    def generate_swap_option(self):
+    def generate_swap_option(self,f,t):
         valid_pairs = [
             (from_t, to_t) for from_t in self.TICKERS for to_t in self.TICKERS
             if from_t != to_t and  (
-                (from_t == "PHRS" and to_t == "WPHRS") or 
-                (from_t == "WPHRS" and to_t == "PHRS")
+                (from_t == f and to_t == t) 
             )
         ]
-
+        print(valid_pairs)
         from_ticker, to_ticker = random.choice(valid_pairs)
 
         def get_contract(ticker):
@@ -692,38 +691,38 @@ class Faroswap:
                 f"{Fore.GREEN+Style.BRIGHT}Swap{Style.RESET_ALL}"
                 f"{Fore.WHITE+Style.BRIGHT} {i+1} / {self.swap_count} {Style.RESET_ALL}                           "
             )
+            for aaa in [('PHRS', 'USDC'), ('PHRS', 'USDT')]:
+                option = self.generate_swap_option(aaa[0],aaa[1])
+                swap_option = option["swap_option"]
+                from_token = option["from_token"]
+                to_token = option["to_token"]
+                ticker = option["ticker"]
+                amount = option["amount"]
 
-            option = self.generate_swap_option()
-            swap_option = option["swap_option"]
-            from_token = option["from_token"]
-            to_token = option["to_token"]
-            ticker = option["ticker"]
-            amount = option["amount"]
-
-            self.log(
-                f"{Fore.CYAN+Style.BRIGHT}     Option  :{Style.RESET_ALL}"
-                f"{Fore.BLUE+Style.BRIGHT} {swap_option} {Style.RESET_ALL}"
-            )
-
-            balance = await self.get_token_balance(address, from_token, use_proxy)
-            self.log(
-                f"{Fore.CYAN+Style.BRIGHT}     Balance :{Style.RESET_ALL}"
-                f"{Fore.WHITE+Style.BRIGHT} {balance} {ticker} {Style.RESET_ALL}"
-            )
-            self.log(
-                f"{Fore.CYAN+Style.BRIGHT}     Amount  :{Style.RESET_ALL}"
-                f"{Fore.WHITE+Style.BRIGHT} {amount} {ticker} {Style.RESET_ALL}"
-            )
-
-            if not balance or balance <= amount:
                 self.log(
-                    f"{Fore.CYAN+Style.BRIGHT}     Status  :{Style.RESET_ALL}"
-                    f"{Fore.YELLOW+Style.BRIGHT} Insufficient {ticker} Token Balance {Style.RESET_ALL}"
+                    f"{Fore.CYAN+Style.BRIGHT}     Option  :{Style.RESET_ALL}"
+                    f"{Fore.BLUE+Style.BRIGHT} {swap_option} {Style.RESET_ALL}"
                 )
-                continue
 
-            await self.process_perform_swap(account, address, from_token, to_token, amount, use_proxy)
-            await self.print_timer()
+                balance = await self.get_token_balance(address, from_token, use_proxy)
+                self.log(
+                    f"{Fore.CYAN+Style.BRIGHT}     Balance :{Style.RESET_ALL}"
+                    f"{Fore.WHITE+Style.BRIGHT} {balance} {ticker} {Style.RESET_ALL}"
+                )
+                self.log(
+                    f"{Fore.CYAN+Style.BRIGHT}     Amount  :{Style.RESET_ALL}"
+                    f"{Fore.WHITE+Style.BRIGHT} {amount} {ticker} {Style.RESET_ALL}"
+                )
+
+                if not balance or balance <= amount:
+                    self.log(
+                        f"{Fore.CYAN+Style.BRIGHT}     Status  :{Style.RESET_ALL}"
+                        f"{Fore.YELLOW+Style.BRIGHT} Insufficient {ticker} Token Balance {Style.RESET_ALL}"
+                    )
+                    continue
+
+                await self.process_perform_swap(account, address, from_token, to_token, amount, use_proxy)
+                await self.print_timer()
 
     async def process_option_4(self, account: str, address: str, use_proxy: bool):
         self.log(f"{Fore.CYAN+Style.BRIGHT}Add Liquidity:{Style.RESET_ALL}                       ")

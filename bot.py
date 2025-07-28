@@ -1265,17 +1265,17 @@ class PharosTestnet:
             await self.process_option_1(address, use_proxy)
             await asyncio.sleep(1)
 
-            await self.process_option_2(account, address, use_proxy)
-            await asyncio.sleep(1)
+            # await self.process_option_2(account, address, use_proxy)
+            # await asyncio.sleep(1)
 
-            await self.process_option_3(account, address, use_proxy)
-            await asyncio.sleep(1)
+            # await self.process_option_3(account, address, use_proxy)
+            # await asyncio.sleep(1)
             
-            await self.process_option_4(account, address, use_proxy)
-            await asyncio.sleep(1)
+            # await self.process_option_4(account, address, use_proxy)
+            # await asyncio.sleep(1)
 
-            await self.process_option_5(account, address, use_proxy)
-            await asyncio.sleep(1)
+            # await self.process_option_5(account, address, use_proxy)
+            # await asyncio.sleep(1)
 
     async def main(self):
         try:
@@ -1325,8 +1325,8 @@ class PharosTestnet:
 
                 await self.process_option_6()
                 await asyncio.sleep(1)
-                await self.process_option_7()
-                await asyncio.sleep(1)
+                # await self.process_option_7()
+                # await asyncio.sleep(1)
 
                 self.log(f"{Fore.CYAN + Style.BRIGHT}={Style.RESET_ALL}"*72)
                 # 
