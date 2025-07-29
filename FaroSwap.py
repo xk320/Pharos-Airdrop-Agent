@@ -233,7 +233,7 @@ class Faroswap:
                 (from_t == f and to_t == t) 
             )
         ]
-        print(valid_pairs)
+        # print(valid_pairs)
         from_ticker, to_ticker = random.choice(valid_pairs)
 
         def get_contract(ticker):
@@ -837,25 +837,56 @@ class Faroswap:
                 await self.load_proxies(use_proxy_choice)
             
             separator = "=" * 25
-            for account in accounts:
-                if account:
-                    address = self.generate_address(account)
+            # 增加指定线程数量，使用 asyncio.Semaphore 控制并发线程数
+            import asyncio
 
-                    self.log(
-                        f"{Fore.CYAN + Style.BRIGHT}{separator}[{Style.RESET_ALL}"
-                        f"{Fore.WHITE + Style.BRIGHT} {self.mask_account(address)} {Style.RESET_ALL}"
-                        f"{Fore.CYAN + Style.BRIGHT}]{separator}{Style.RESET_ALL}"
-                    )
+            async def process_all_accounts(accounts, use_proxy, rotate_proxy, max_concurrent=5):
+                semaphore = asyncio.Semaphore(max_concurrent)
+                tasks = []
 
-                    if not address:
+                async def sem_task(account, address):
+                    async with semaphore:
+                        await self.process_accounts(account, address, use_proxy, rotate_proxy)
+
+                for account in accounts:
+                    if account:
+                        address = self.generate_address(account)
                         self.log(
-                            f"{Fore.CYAN + Style.BRIGHT}Status       :{Style.RESET_ALL}"
-                            f"{Fore.RED + Style.BRIGHT} Invalid Private Key or Library Version Not Supported {Style.RESET_ALL}"
+                            f"{Fore.CYAN + Style.BRIGHT}{separator}[{Style.RESET_ALL}"
+                            f"{Fore.WHITE + Style.BRIGHT} {self.mask_account(address)} {Style.RESET_ALL}"
+                            f"{Fore.CYAN + Style.BRIGHT}]{separator}{Style.RESET_ALL}"
                         )
-                        continue
-
-                await self.process_accounts(account, address, use_proxy, rotate_proxy)
+                        if not address:
+                            self.log(
+                                f"{Fore.CYAN + Style.BRIGHT}Status       :{Style.RESET_ALL}"
+                                f"{Fore.RED + Style.BRIGHT} Invalid Private Key or Library Version Not Supported {Style.RESET_ALL}"
+                            )
+                            continue
+                        tasks.append(sem_task(account, address))
+                await asyncio.gather(*tasks)
                 await asyncio.sleep(3)
+
+            # 你可以在这里指定线程数量，比如 max_concurrent=5
+            await process_all_accounts(accounts, use_proxy, rotate_proxy, max_concurrent=5)
+            # for account in accounts:
+            #     if account:
+            #         address = self.generate_address(account)
+
+            #         self.log(
+            #             f"{Fore.CYAN + Style.BRIGHT}{separator}[{Style.RESET_ALL}"
+            #             f"{Fore.WHITE + Style.BRIGHT} {self.mask_account(address)} {Style.RESET_ALL}"
+            #             f"{Fore.CYAN + Style.BRIGHT}]{separator}{Style.RESET_ALL}"
+            #         )
+
+            #         if not address:
+            #             self.log(
+            #                 f"{Fore.CYAN + Style.BRIGHT}Status       :{Style.RESET_ALL}"
+            #                 f"{Fore.RED + Style.BRIGHT} Invalid Private Key or Library Version Not Supported {Style.RESET_ALL}"
+            #             )
+            #             continue
+
+            #     await self.process_accounts(account, address, use_proxy, rotate_proxy)
+            #     await asyncio.sleep(3)
 
             self.log(f"{Fore.CYAN + Style.BRIGHT}={Style.RESET_ALL}"*72)
 
