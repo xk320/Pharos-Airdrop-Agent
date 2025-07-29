@@ -11,6 +11,8 @@ from colorama import *
 import asyncio, random, secrets, json, time, os, pytz
 from FaroSwap import Faroswap
 from DomainName import DomainName
+import asyncio, random, json, time, re, os, pytz
+
 
 wib = pytz.timezone('Asia/Jakarta')
 
@@ -118,6 +120,7 @@ class PharosTestnet:
         # Min Delay
         self.min_delay = 1
         self.max_delay = 4
+        self.max_concurrent = 20
 
     def clear_terminal(self):
         os.system('cls' if os.name == 'nt' else 'clear')
@@ -1300,6 +1303,18 @@ class PharosTestnet:
                     await self.load_proxies(use_proxy_choice)
                 
                 separator = "=" * 25
+                
+                import asyncio
+
+                # 最大线程数量可通过 self.max_concurrent 设置，若未设置则默认为5
+                sem = asyncio.Semaphore(self.max_concurrent)
+                tasks = []
+
+                async def sem_task(account, address, option, use_proxy, rotate_proxy):
+                    async with sem:
+                        await self.process_accounts(account, address, option, use_proxy, rotate_proxy)
+                        await asyncio.sleep(3)
+
                 for account in accounts:
                     if account:
                         address = self.generate_address(account)
@@ -1320,8 +1335,9 @@ class PharosTestnet:
 
                         self.signatures[address] = signature
 
-                        await self.process_accounts(account, address, option, use_proxy, rotate_proxy)
-                        await asyncio.sleep(3)
+                        tasks.append(sem_task(account, address, option, use_proxy, rotate_proxy))
+
+                await asyncio.gather(*tasks)
 
                 await self.process_option_6()
                 await asyncio.sleep(1)
