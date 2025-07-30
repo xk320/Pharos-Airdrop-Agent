@@ -81,6 +81,7 @@ class AutoStaking:
         self.musd_amount = 10
         self.min_delay = 1
         self.max_delay = 2
+        self.max_workers = 30
 
     def clear_terminal(self):
         os.system('cls' if os.name == 'nt' else 'clear')
@@ -813,8 +814,6 @@ class AutoStaking:
                 separator = "=" * 25
                 import concurrent.futures
 
-                # 线程数量可配置，默认10
-                max_workers = getattr(self, "max_workers", 10)
 
                 async def process_account_wrapper(account):
                     if account:
@@ -846,7 +845,7 @@ class AutoStaking:
 
                 # 使用线程池并发执行
                 loop = asyncio.get_running_loop()
-                with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+                with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_workers) as executor:
                     tasks = []
                     for account in accounts:
                         # 每个线程中启动一个新的事件循环来运行协程
