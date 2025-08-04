@@ -161,6 +161,7 @@ class Brokex:
         self.lp_option = 0
         self.min_delay = 1
         self.max_delay = 3
+        self.max_concurrent = 30
 
     def clear_terminal(self):
         os.system('cls' if os.name == 'nt' else 'clear')
@@ -1305,6 +1306,17 @@ class Brokex:
                     await self.load_proxies(use_proxy_choice)
                 
                 separator = "=" * 25
+                import asyncio
+
+                # 使用信号量控制最大并发线程数，self.max_concurrent 可自定义
+                sem = asyncio.Semaphore(self.max_concurrent)
+                tasks = []
+
+                async def sem_task(account, address, option, use_proxy, rotate_proxy):
+                    async with sem:
+                        await self.process_accounts(account, address, option, use_proxy, rotate_proxy)
+                        await asyncio.sleep(3)
+
                 for account in accounts:
                     if account:
                         address = self.generate_address(account)
@@ -1322,8 +1334,9 @@ class Brokex:
                             )
                             continue
 
-                        await self.process_accounts(account, address, option, use_proxy, rotate_proxy)
-                        await asyncio.sleep(3)
+                        tasks.append(sem_task(account, address, option, use_proxy, rotate_proxy))
+
+                await asyncio.gather(*tasks)
 
                 self.log(f"{Fore.CYAN + Style.BRIGHT}={Style.RESET_ALL}"*72)
                 seconds = 24 * 60 * 60
