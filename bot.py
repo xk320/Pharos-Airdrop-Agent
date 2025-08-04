@@ -101,16 +101,16 @@ class PharosTestnet:
         # Access Tokens
         self.access_tokens = {}
         # Tx Count
-        self.tx_count = 30
+        self.tx_count = 1
         self.tx_amount = round(random.uniform(0.001, 0.005), 6)
         # Wrap Option
         self.wrap_option = 4
         # Wrap Amount
         self.wrap_amount = self.tx_amount
         # Add LP Count
-        self.add_lp_count = 30
+        self.add_lp_count = 35
         # Swap Count
-        self.swap_count = 20
+        self.swap_count = 1
         # WPHRS Amount
         self.wphrs_amount = self.tx_amount
         # USDC Amount
@@ -1268,8 +1268,8 @@ class PharosTestnet:
             await self.process_option_1(address, use_proxy)
             await asyncio.sleep(1)
 
-            # await self.process_option_2(account, address, use_proxy)
-            # await asyncio.sleep(1)
+            await self.process_option_2(account, address, use_proxy)
+            await asyncio.sleep(1)
 
             await self.process_option_3(account, address, use_proxy)
             await asyncio.sleep(1)
