@@ -104,13 +104,13 @@ class PharosTestnet:
         self.tx_count = 1
         self.tx_amount = round(random.uniform(0.001, 0.005), 6)
         # Wrap Option
-        self.wrap_option = 4
+        self.wrap_option = 10
         # Wrap Amount
         self.wrap_amount = self.tx_amount
         # Add LP Count
-        self.add_lp_count = 35
+        self.add_lp_count = 10
         # Swap Count
-        self.swap_count = 1
+        self.swap_count = 10
         # WPHRS Amount
         self.wphrs_amount = self.tx_amount
         # USDC Amount
