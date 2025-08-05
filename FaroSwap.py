@@ -83,7 +83,7 @@ class Faroswap:
         self.usdt_swap_amount = amount
         self.weth_swap_amount = amount
         self.wbtc_swap_amount = amount
-        self.add_lp_count = 30
+        self.add_lp_count = 10
         self.phrs_add_lp_amount = amount/2
         self.wphrs_add_lp_amount = amount/2
         self.usdc_add_lp_amount = amount/2
