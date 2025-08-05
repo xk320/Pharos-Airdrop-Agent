@@ -1277,8 +1277,8 @@ class PharosTestnet:
             await self.process_option_4(account, address, use_proxy)
             await asyncio.sleep(1)
 
-            # await self.process_option_5(account, address, use_proxy)
-            # await asyncio.sleep(1)
+            await self.process_option_5(account, address, use_proxy)
+            await asyncio.sleep(1)
 
     async def main(self):
         try:

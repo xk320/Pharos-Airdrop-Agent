@@ -152,11 +152,11 @@ class Brokex:
         self.used_nonce = {}
         self.open_ids = {}
         self.potition_option = 0
-        self.potition_count = 30
+        self.potition_count = 10
         self.open_amount = random.randint(10, 20)
-        self.deposit_lp_count = 30
+        self.deposit_lp_count = 10
         self.deposit_lp_amount = random.randint(10, 20)
-        self.withdraw_lp_count = 30
+        self.withdraw_lp_count = 10
         self.withdraw_lp_amount = random.randint(10, 20)
         self.lp_option = 0
         self.min_delay = 1
