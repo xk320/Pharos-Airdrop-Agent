@@ -92,6 +92,7 @@ class Faroswap:
         self.wbtc_add_lp_amount = amount/2
         self.min_delay = 3
         self.max_delay = 5
+        self.max_concurrent = 20
 
     def clear_terminal(self):
         os.system('cls' if os.name == 'nt' else 'clear')
@@ -837,8 +838,7 @@ class Faroswap:
                 await self.load_proxies(use_proxy_choice)
             
             separator = "=" * 25
-            # 增加指定线程数量，使用 asyncio.Semaphore 控制并发线程数
-            import asyncio
+
 
             async def process_all_accounts(accounts, use_proxy, rotate_proxy, max_concurrent=5):
                 semaphore = asyncio.Semaphore(max_concurrent)
@@ -867,7 +867,7 @@ class Faroswap:
                 await asyncio.sleep(3)
 
             # 你可以在这里指定线程数量，比如 max_concurrent=5
-            await process_all_accounts(accounts, use_proxy, rotate_proxy, max_concurrent=5)
+            await process_all_accounts(accounts, use_proxy, rotate_proxy, max_concurrent=self.max_concurrent)
             # for account in accounts:
             #     if account:
             #         address = self.generate_address(account)

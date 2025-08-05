@@ -104,11 +104,11 @@ class PharosTestnet:
         self.tx_count = 1
         self.tx_amount = round(random.uniform(0.001, 0.005), 6)
         # Wrap Option
-        self.wrap_option = 4
+        self.wrap_option = 1
         # Wrap Amount
         self.wrap_amount = self.tx_amount
         # Add LP Count
-        self.add_lp_count = 35
+        self.add_lp_count = 1
         # Swap Count
         self.swap_count = 1
         # WPHRS Amount
@@ -120,7 +120,7 @@ class PharosTestnet:
         # Min Delay
         self.min_delay = 1
         self.max_delay = 4
-        self.max_concurrent = 20
+        self.max_concurrent = 25
 
     def clear_terminal(self):
         os.system('cls' if os.name == 'nt' else 'clear')
@@ -1273,7 +1273,7 @@ class PharosTestnet:
 
             await self.process_option_3(account, address, use_proxy)
             await asyncio.sleep(1)
-            
+
             await self.process_option_4(account, address, use_proxy)
             await asyncio.sleep(1)
 
