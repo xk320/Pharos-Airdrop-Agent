@@ -76,7 +76,7 @@ class Faroswap:
         self.account_proxies = {}
         self.used_nonce = {}
         self.dp_or_wd_option = None
-        self.swap_count = 15
+        self.swap_count = 10
         self.phrs_swap_amount = amount
         self.wphrs_swap_amount = amount
         self.usdc_swap_amount = amount
