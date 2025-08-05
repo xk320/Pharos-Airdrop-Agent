@@ -1,10 +1,10 @@
-# Pharos 空投助手
+# 1. Pharos 空投助手
 
 一个功能强大的Web3空投自动化工具，支持Pharos测试网、AutoStaking和Brokex等多个平台的自动化操作。
 
-## 🌟 主要功能
+## 1.1 🌟 主要功能
 
-### Pharos 测试网 (bot.py)
+### 1.1.1 Pharos 测试网 (bot.py)
 - ✅ 自动登录和身份验证
 - ✅ 自动每日签到领取奖励
 - ✅ 自动领取 Faucet (PHRS, USDC, USDT)
@@ -15,21 +15,21 @@
 - ✅ 支持多钱包并发运行
 - ✅ 支持自定义代理
 
-### AutoStaking 平台 (AutoStaking.py)
+### 1.1.2 AutoStaking 平台 (AutoStaking.py)
 - ✅ 自动领取 Faucet
 - ✅ 智能投资组合推荐
 - ✅ 自动质押操作
 - ✅ 支持 USDC, USDT, MUSD 代币
 - ✅ 多钱包管理
 
-### Brokex 交易平台 (Brokex.py)
+### 1.1.3 Brokex 交易平台 (Brokex.py)
 - ✅ 自动领取 Faucet
 - ✅ 自动开仓/平仓操作
 - ✅ 流动性挖矿 (LP 存款/提款)
 - ✅ 支持杠杆交易
 - ✅ 多钱包并发操作
 
-### FaroSwap 去中心化交易所 (FaroSwap.py)
+### 1.1.4 FaroSwap 去中心化交易所 (FaroSwap.py)
 - ✅ 自动代币交换 (PHRS, WPHRS, USDC, USDT, WETH, WBTC)
 - ✅ 自动添加 DVM 流动性
 - ✅ 智能路由选择 (Dodo API)
@@ -37,7 +37,7 @@
 - ✅ 多钱包并发操作
 - ✅ 随机交易金额和延迟
 
-### DomainName 域名注册 (DomainName.py)
+### 1.1.5 DomainName 域名注册 (DomainName.py)
 - ✅ 自动注册 .phrs 域名
 - ✅ 批量域名注册
 - ✅ 随机域名生成
@@ -45,30 +45,30 @@
 - ✅ 代理支持
 - ✅ 进度跟踪和错误重试
 
-## 📋 系统要求
+## 1.2 📋 系统要求
 
-### 基础要求
+### 1.2.1 基础要求
 - **Python**: 3.9 或更高版本
 - **pip**: Python 包管理器
 - **网络**: 稳定的网络连接
 - **代理**: 可选的代理服务器
 
-### 推荐配置
+### 1.2.2 推荐配置
 - **操作系统**: Windows 10+, macOS 10.15+, Ubuntu 18.04+
 - **内存**: 至少 4GB RAM
 - **存储**: 至少 1GB 可用空间
 - **网络**: 稳定的互联网连接，推荐使用代理
 
-### 开发环境（可选）
+### 1.2.3 开发环境（可选）
 - **IDE**: VS Code, PyCharm, 或 Cursor
 - **Git**: 用于版本控制
 - **虚拟环境**: 推荐使用 venv 或 conda
 
-## 🚀 快速开始
+## 2. 🚀 快速开始
 
-### 1. 环境准备
+### 2.1 环境准备
 
-#### 检查Python版本
+#### 2.1.1 检查Python版本
 首先检查您的系统是否已安装Python：
 
 ```bash
@@ -78,9 +78,11 @@ pip --version     # 检查pip版本
 
 如果显示版本号且版本 >= 3.9，则可跳过安装步骤。
 
-#### 各系统Python安装指南
+### 2.2 系统安装指南
 
-**Windows 系统：**
+#### 2.2.1 Windows 系统安装
+
+**Python 安装：**
 1. 访问 [Python官网](https://www.python.org/downloads/)
 2. 下载 Python 3.9+ 安装包
 3. 运行安装程序，**重要：勾选 "Add Python to PATH"**
@@ -90,19 +92,48 @@ pip --version     # 检查pip版本
    pip --version
    ```
 
-**macOS 系统：**
-```bash
-# 使用 Homebrew 安装（推荐）
-brew install python@3.9
+**获取项目代码：**
+```cmd
+# 方法1：使用 Git 克隆（推荐）
+git clone <repository-url>
+cd Pharos-Airdrop-Agent
 
-# 或使用官方安装包
-# 1. 访问 https://www.python.org/downloads/macos/
-# 2. 下载并安装 .pkg 文件
-
-# 验证安装
-python3 --version
-pip3 --version
+# 方法2：直接下载 ZIP 文件
+# 1. 点击项目页面的 "Code" -> "Download ZIP"
+# 2. 解压到本地目录
+# 3. 进入项目目录
 ```
+
+**安装依赖包：**
+**如何打开命令行（CMD）窗口：**
+
+- **Windows 10/11：**
+  1. 按下 `Win + R` 键，输入 `cmd`，然后回车。
+  2. 或者点击左下角“开始”菜单，输入 `cmd` 或 “命令提示符”，点击打开。
+
+
+```cmd
+# 使用 pip 安装依赖
+pip install -r requirements.txt
+
+# 如果遇到权限问题，使用：
+pip install --user -r requirements.txt
+
+# 建议使用虚拟环境（推荐）：
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+**验证安装：**
+```cmd
+# 检查关键依赖是否安装成功
+python -c "import web3, aiohttp, eth_account; print('依赖安装成功！')"
+```
+
+#### 2.2.2 Linux/macOS 系统安装
+
+**Python 安装：**
 
 **Ubuntu/Debian Linux：**
 ```bash
@@ -135,6 +166,20 @@ python3.9 --version
 pip3.9 --version
 ```
 
+**macOS 系统：**
+```bash
+# 使用 Homebrew 安装（推荐）
+brew install python@3.9
+
+# 或使用官方安装包
+# 1. 访问 https://www.python.org/downloads/macos/
+# 2. 下载并安装 .pkg 文件
+
+# 验证安装
+python3 --version
+pip3 --version
+```
+
 **使用 pyenv（推荐用于多版本管理）：**
 ```bash
 # 安装 pyenv
@@ -157,9 +202,7 @@ python --version
 pip --version
 ```
 
-### 2. 下载和安装
-
-#### 获取项目代码
+**获取项目代码：**
 ```bash
 # 方法1：使用 Git 克隆（推荐）
 git clone <repository-url>
@@ -171,32 +214,27 @@ cd Pharos-Airdrop-Agent
 # 3. 进入项目目录
 ```
 
-#### 安装依赖包
+**安装依赖包：**
 ```bash
 # 使用 pip 安装依赖
-pip install -r requirements.txt
-
-# 如果遇到权限问题，使用：
-pip install --user -r requirements.txt
-
-# 在 Linux/macOS 上可能需要使用：
 pip3 install -r requirements.txt
 
+# 如果遇到权限问题，使用：
+pip3 install --user -r requirements.txt
+
 # 建议使用虚拟环境（推荐）：
-python -m venv venv
-source venv/bin/activate  # Linux/macOS
-# 或
-venv\Scripts\activate     # Windows
+python3 -m venv venv
+source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-#### 验证安装
+**验证安装：**
 ```bash
 # 检查关键依赖是否安装成功
-python -c "import web3, aiohttp, eth_account; print('依赖安装成功！')"
+python3 -c "import web3, aiohttp, eth_account; print('依赖安装成功！')"
 ```
 
-### 3. 配置钱包
+### 2.3 配置钱包
 
 编辑 `accounts.txt` 文件，添加您的私钥（每行一个）：
 
@@ -208,7 +246,7 @@ your_private_key_3
 
 ⚠️ **安全提醒**：请妥善保管您的私钥，不要泄露给他人。
 
-### 4. 配置代理（可选）
+### 2.4 配置代理（可选）
 
 如果您需要使用代理，编辑 `proxy.txt` 文件：
 
@@ -221,9 +259,9 @@ http://user:pass@ip:port
 ```
 
 
-## 🎯 使用方法
+## 3. 🎯 使用方法
 
-### Pharos 测试网操作
+### 3.1 Pharos 测试网操作
 
 ```bash
 python bot.py
@@ -237,7 +275,7 @@ python bot.py
 5. **添加流动性** - 为交易对添加流动性
 6. **代币交换** - 在不同代币间交换
 
-### AutoStaking 操作
+### 3.2 AutoStaking 操作
 
 ```bash
 python AutoStaking.py
@@ -248,7 +286,7 @@ python AutoStaking.py
 - 智能投资组合推荐
 - 自动质押操作
 
-### Brokex 交易操作
+### 3.3 Brokex 交易操作
 
 ```bash
 python Brokex.py
@@ -259,7 +297,7 @@ python Brokex.py
 - 杠杆交易开仓/平仓
 - 流动性挖矿操作
 
-### FaroSwap 交易操作
+### 3.4 FaroSwap 交易操作
 
 ```bash
 python FaroSwap.py
@@ -271,7 +309,7 @@ python FaroSwap.py
 - 智能路由优化
 - 批量交易执行
 
-### DomainName 域名注册
+### 3.5 DomainName 域名注册
 
 ```bash
 python DomainName.py
@@ -283,7 +321,7 @@ python DomainName.py
 - 随机域名生成
 - 并发注册处理
 
-## 📁 文件说明
+## 4. 📁 文件说明
 
 | 文件 | 说明 |
 |------|------|
@@ -298,16 +336,16 @@ python DomainName.py
 | `pools.json` | 流动性池配置 |
 | `requirements.txt` | Python 依赖包列表 |
 
-## ⚙️ 配置说明
+## 5. ⚙️ 配置说明
 
-### 网络配置
+### 5.1 网络配置
 - **Pharos RPC**: `https://testnet.dplabs-internal.com`
 - **合约地址**: 已预配置在脚本中
 
 
 ```
 
-## ⚠️ 注意事项
+## 6. ⚠️ 注意事项
 
 1. **私钥安全**：请确保 `accounts.txt` 文件安全，不要上传到公共仓库
 2. **网络稳定**：建议使用稳定的网络连接，必要时配置代理
@@ -318,9 +356,9 @@ python DomainName.py
 7. **交易风险**：FaroSwap 和 Brokex 的交易操作需要谨慎评估风险
 8. **并发控制**：合理设置并发数量，避免对网络造成过大压力
 
-## 🐛 故障排除
+## 7. 🐛 故障排除
 
-### 常见问题
+### 7.1 常见问题
 
 1. **连接超时**
    - 检查网络连接
@@ -344,15 +382,21 @@ python DomainName.py
    ```
 
 4. **权限错误**
-   ```bash
-   # Linux/macOS 权限问题
-   chmod +x *.py
    
-   # Windows 权限问题
+   **Windows 系统：**
+   ```cmd
    # 以管理员身份运行命令提示符
-   
    # pip 权限问题
    pip install --user -r requirements.txt
+   ```
+   
+   **Linux/macOS 系统：**
+   ```bash
+   # 文件权限问题
+   chmod +x *.py
+   
+   # pip 权限问题
+   pip3 install --user -r requirements.txt
    ```
 
 5. **域名注册失败**
@@ -365,14 +409,14 @@ python DomainName.py
    - 确认滑点设置是否合理
    - 检查网络拥堵情况
 
-## 📞 支持
+## 8. 📞 支持
 
 如果您遇到问题或有建议，请：
 1. 检查本文档的故障排除部分
 2. 查看代码注释和错误信息
 3. 确保使用最新版本的依赖包
 
-## 📄 许可证
+## 9. 📄 许可证
 
 本项目仅供学习和研究使用，请遵守相关法律法规和平台规则。
 
