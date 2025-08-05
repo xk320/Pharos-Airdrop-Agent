@@ -75,7 +75,7 @@ class AutoStaking:
         self.account_proxies = {}
         self.auth_tokens = {}
         self.used_nonce = {}
-        self.staking_count = 30
+        self.staking_count = 10
         self.usdc_amount = 1
         self.usdt_amount = 1
         self.musd_amount = 10
