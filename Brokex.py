@@ -22,12 +22,12 @@ class Brokex:
             "Sec-Fetch-Site": "cross-site",
             "User-Agent": FakeUserAgent().random
         }
-        self.BASE_API = "https://proofcrypto-production.up.railway.app"
+        self.BASE_API = "https://proof.brokex.trade"
         self.RPC_URL = "https://testnet.dplabs-internal.com/"
         self.PHRS_CONTRACT_ADDRESS = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
         self.USDT_CONTRACT_ADDRESS = "0x78ac5e2d8a78a8b8e6d10c7b7274b03c10c91cef"
-        self.FAUCET_ROUTER_ADDRESS = "0x50576285BD33261DEe1aD99BF766CD8249520a58"
-        self.TRADE_ROUTER_ADDRESS = "0xDe897635870b3Dd2e097C09f1cd08841DBc3976a"
+        self.FAUCET_ROUTER_ADDRESS = "0xa7Bb3C282Ff1eFBc3F2D8fcd60AaAB3aeE3CBa49"
+        self.TRADE_ROUTER_ADDRESS = "0x34f89ca5a1c6dc4eb67dfe0af5b621185df32854"
         self.POOL_ROUTER_ADDRESS = "0x9A88d07850723267DB386C681646217Af7e220d7"
         self.ERC20_CONTRACT_ABI = json.loads('''[
             {"type":"function","name":"balanceOf","stateMutability":"view","inputs":[{"name":"address","type":"address"}],"outputs":[{"name":"","type":"uint256"}]},
@@ -152,15 +152,15 @@ class Brokex:
         self.used_nonce = {}
         self.open_ids = {}
         self.potition_option = 0
-        self.potition_count = 10
+        self.potition_count = 30
         self.open_amount = random.randint(10, 20)
-        self.deposit_lp_count = 10
+        self.deposit_lp_count = 30
         self.deposit_lp_amount = random.randint(10, 20)
-        self.withdraw_lp_count = 10
+        self.withdraw_lp_count = 30
         self.withdraw_lp_amount = random.randint(10, 20)
         self.lp_option = 0
-        self.min_delay = 1
-        self.max_delay = 3
+        self.min_delay = 2
+        self.max_delay = 5
         self.max_concurrent = 30
 
     def clear_terminal(self):
@@ -1339,19 +1339,6 @@ class Brokex:
                 await asyncio.gather(*tasks)
 
                 self.log(f"{Fore.CYAN + Style.BRIGHT}={Style.RESET_ALL}"*72)
-                seconds = 24 * 60 * 60
-                while seconds > 0:
-                    formatted_time = self.format_seconds(seconds)
-                    print(
-                        f"{Fore.CYAN+Style.BRIGHT}[ Wait for{Style.RESET_ALL}"
-                        f"{Fore.WHITE+Style.BRIGHT} {formatted_time} {Style.RESET_ALL}"
-                        f"{Fore.CYAN+Style.BRIGHT}... ]{Style.RESET_ALL}"
-                        f"{Fore.WHITE+Style.BRIGHT} | {Style.RESET_ALL}"
-                        f"{Fore.BLUE+Style.BRIGHT}All Accounts Have Been Processed.{Style.RESET_ALL}",
-                        end="\r"
-                    )
-                    await asyncio.sleep(1)
-                    seconds -= 1
 
         except FileNotFoundError:
             self.log(f"{Fore.RED}File 'accounts.txt' Not Found.{Style.RESET_ALL}")
